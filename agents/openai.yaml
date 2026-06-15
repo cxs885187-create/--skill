@@ -1,0 +1,4 @@
+﻿interface:
+  display_name: "Nuwa Mends the Sky"
+  short_description: "Builds semi-automatic exam cram workflows from course materials."
+  default_prompt: "Use $nuwa-mends-the-sky to turn my course materials into a one-course final-exam cram workflow."
