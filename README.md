@@ -1,62 +1,232 @@
-# 女娲补天 Skill
+<p align="right">
+  <strong>English</strong> | <a href="./README.zh-CN.md">简体中文</a>
+</p>
 
-`nuwa-mends-the-sky` 是一个面向大学期末突击复习的 Codex skill。它把 PPT、讲义、教材章节、作业、题库和往年卷等真实课程材料，整理成一个“先建骨架、再压缩、再自测、再回补”的半自动复习流程。
+# Nuwa Mends the Sky
 
-这个 README 解释每个核心功能背后的学习理论或经典方法，方便维护者判断为什么要这样设计，而不只是看到一组操作规则。
+A Codex Skill for last-minute university final-exam preparation.
 
-## 功能与理论支持
+Nuwa Mends the Sky is not an automatic exam-prediction tool or a universal study assistant. It is a semi-automatic exam-prep workflow that turns slides, lecture notes, textbooks, question banks, past papers, and supplemental materials into a Markdown note library that can be reviewed, self-tested, and iterated.
 
-| Skill 功能 | 理论支持或经典方法 | 在 skill 中的落点 |
+## Best-Fit Scenarios
+
+- Finals are near, and the material pile is large and messy.
+- One folder contains PPTs, PDFs, question banks, textbooks, and images from multiple courses.
+- You want to archive materials by course before processing one course at a time.
+- You want compressed topic cards that can be reviewed directly, not only an index.
+- You want to infer high-frequency question patterns from question banks, homework, and past papers.
+- You want multi-round questioning to locate whether the real weakness is definitions, formulas, pattern recognition, or unstable steps.
+- You want open lecture notes, GitHub textbooks, GitHub question banks, diagrams, and visual aids only when abstract material is hard to understand.
+
+## Core Principles
+
+- Process one course at a time: do not generate complete cram packages for multiple courses in one pass.
+- Ask for the exam time first: remaining time determines granularity and strategy.
+- Archive materials before generating notes: in file mode, create real course material folders instead of only writing classification conclusions in an index.
+- Grade evidence: distinguish user materials, teacher materials, past papers, school-specific open repositories, and generic explanation aids.
+- Do not auto-grade authoritatively: the Skill provides reference answers and scoring points; the user self-evaluates.
+- Notes must be reviewable: if a file cannot help the user start memorizing, solving, or diagnosing mistakes immediately, it is not good enough.
+
+## Features
+
+### Material Archiving
+
+In file mode, the Skill should first organize materials into a structure like:
+
+```text
+workspace/
+├─ to-confirm/
+├─ Advanced-Mathematics-A/
+│  ├─ materials/
+│  ├─ index.md
+│  ├─ core-skeleton.md
+│  ├─ self-test-and-gaps.md
+│  └─ cram-summary.md
+└─ Ideology-and-Morality/
+   └─ materials/
+```
+
+Low-confidence materials go into `to-confirm/` or are explicitly marked as needing confirmation.
+
+### Course Skeleton
+
+Evidence priority:
+
+1. User-provided syllabus, teacher highlights, and course slides.
+2. User textbooks and homework.
+3. User-provided past papers and question banks.
+4. School-specific open question banks or past-paper repositories.
+5. Official, publisher, or authoritative course pages.
+6. Generic GitHub notes or open textbooks.
+
+Generic GitHub repositories can only be used as explanation aids. They cannot replace teacher materials or define exam scope.
+
+### School-Targeted GitHub Search
+
+If the user provides a school name, the Skill should prioritize school-specific open question banks, past papers, homework repositories, and review repositories.
+
+They should be treated as stronger question-style references only when:
+
+- the school matches
+- the course name or course code matches
+- the material type is clear, such as final, midterm, homework, quiz, or question bank
+- the year or semester is traceable when possible
+
+Otherwise, mark them as `explanation aid` or `low confidence reference`.
+
+### Topic-Card Notes
+
+For topics such as multiple integrals, line integrals, surface integrals, and infinite series, the Skill should not generate only an index. It should create topic cards.
+
+Each topic card should answer at least four questions:
+
+- what to memorize
+- how to solve
+- where mistakes usually happen
+- how to self-test
+
+Examples:
+
+- `multiple-integrals-topic.md`
+- `line-and-surface-integrals-topic.md`
+- `series-topic.md`
+
+### Visual Aids
+
+When abstract content is hard to understand, the Skill may generate:
+
+- ASCII sketches
+- Mermaid diagrams
+- tables
+- region, projection, or normal-direction descriptions
+- local rendered diagrams or generated images, if the environment supports them
+
+Good targets for visualization include:
+
+- multiple-integral regions
+- line-integral directions
+- surface-integral normals
+- vector fields
+- coordinate transforms
+- spatial geometry
+- graphs, relations, and paths in discrete mathematics
+
+### Self-Tests and Weakness Diagnosis
+
+The Skill does not perform authoritative automatic grading.
+
+Recommended loop:
+
+1. Give 4 to 5 questions in one round.
+2. Let the user answer closed-book.
+3. Show reference answers or scoring points.
+4. Ask the user to self-label each item as `know`, `partial`, or `dont know`.
+5. Continue with narrower follow-ups based on the self-labels.
+
+Weakness layers include:
+
+- missing definitions
+- weak formula memory
+- weak question-pattern recognition
+- unstable solution steps
+
+If the user labels 3 consecutive items as `dont know`, stop asking more questions and route them back to the relevant topic card for rebuilding.
+
+## What It Does Not Do
+
+- It does not guarantee exam prediction.
+- It does not treat GitHub repositories as the default exam scope.
+- It does not replace textbooks or teacher materials with random webpages.
+- It does not call something "must appear on the exam" when evidence is weak.
+- It does not split one course into dozens of tiny files that are hard to navigate.
+- It does not put everything into one oversized Markdown file unless the user is in 24-hour emergency mode.
+
+## Theoretical Support and Classic Methods
+
+| Function | Theory or classic method | How it appears in the Skill |
 | --- | --- | --- |
-| 一次只处理一门课 | 认知负荷理论、目标屏蔽、单任务聚焦 | 要求 `one course at a time`，避免多门课同时生成完整复习包，减少切换成本和信息过载。 |
-| 先要求真实课程材料 | 建构性对齐、证据本位学习、考试范围对齐 | 输入门槛要求至少有 PPT、讲义、教材、作业、题库或往年卷之一，避免凭通用知识伪造复习范围。 |
-| 按课程分组和低置信标记 | 信息分块、信息觅食、证据分级 | 先按文件名、标题、目录和内容粗分课程；低置信材料进入 `to-confirm`，不默默合并。 |
-| 先搭课程骨架再总结 | 先行组织者、图式理论、概念图方法 | 优先用 syllabus、教材目录、老师重点和 PPT 结构建立 course/chapter/topic/subtopic 层级。 |
-| 证据质量评估 | 形成性评价、证据三角互证 | 区分 skeleton evidence、topic evidence、question-style evidence；题型证据弱时主动降级输出措辞。 |
-| 谨慎联网补缝 | 信息素养、来源可靠性评估、证据层级 | 只在材料不足、事实不确定或用户要求验证时查权威来源；外部资料只能补骨架或解释，不能替代老师材料。 |
-| 学校专属题库搜索 | 情境化学习、近迁移、考试生态对齐 | 有学校名时优先找同校同课的公开题库、往年卷或 GitHub 仓库，并记录匹配证据、年份和材料类型。 |
-| 7 天 / 3 天 / 24 小时模式 | 倒排计划法、帕累托原则、时间盒、遗忘曲线 | 从考试时间倒推复习策略：7 天平衡展开与复习，3 天压缩高价值主题，24 小时以提取练习和错点为主。 |
-| 复习计划只做启发式 | 敏捷计划、滚动规划、有限理性 | 不硬编码“每天固定几个知识块”，而是按证据和时间动态限制重任务、穿插短回忆。 |
-| 目的型 Markdown 笔记 | 康奈尔笔记法、主动回忆、分块学习 | 不生成漂亮但不可复习的长摘要；文件需要能直接开始背、做、查漏。Topic card 包含“记什么、怎么解、易错点、怎么自测”。 |
-| 问题驱动的章节块 | 测试效应、生成效应、Cornell cue column | 用 `Q1` 问题加 `<details>` 参考答案，把笔记从“阅读材料”改成“回忆触发器”。 |
-| 视觉化解释 | 双编码理论、多媒体学习理论、空间推理外化 | 对积分区域、向量场、坐标变换、曲面方向等主题使用 ASCII、表格、Mermaid 或图示，只在降低理解成本时添加。 |
-| 外部解释辅助 | 精加工编码、费曼技巧、类比学习 | 允许用开源讲义或 worked examples 做直觉、记忆钩子和误区提示，但必须标为 explanation aid，不能改考试范围。 |
-| 小轮自测 | 主动回忆、检索练习、形成性评价 | 每轮最多 5 题，先让用户作答，再给 scoring points，让用户自评 `know`、`partial`、`dont know`。 |
-| 不做权威自动评分 | 元认知校准、评价有效性边界 | 明确 V1 不声称能可靠判定证明题、推导题或主观题满分，只提供参考答案和自评框架。 |
-| 多轮定位弱点 | 错误分析、诊断性评价、掌握学习 | 通过定义、公式、识别、步骤等追问，定位是“不会定义”“记忆弱”“题型识别弱”还是“表达/步骤不稳”。 |
-| 自测熔断 | 认知负荷管理、挫败感调节、脚手架教学 | 连续 3 个 `dont know` 时停止加题，回到对应笔记做 retrieval-focused rebuild。 |
-| 谨慎使用“掌握”语言 | 元认知偏差控制、Dunning-Kruger 风险提示 | 只使用 `not started`、`in progress`、`temporary recall ok`、`needs rebuild` 等保守状态。 |
-| 后续复用和增量更新 | 间隔重复、遗忘曲线、学习日志、版本化笔记 | 有旧 Markdown 时先复用 `index.md`；新增材料只更新受影响的笔记、证据标签和自测，而不是默认全量重做。 |
-| 低置信和 fallback 标签 | 不确定性表达、证据透明、风险沟通 | 用 `external skeleton reference`、`likely recall question`、`standard understanding question` 等标签防止把猜测说成真题。 |
+| One-course-at-a-time processing | Cognitive load theory, goal shielding, monotasking | The Skill refuses to generate complete packages for multiple courses before the active course is stable. |
+| Asking for exam time first | Backward planning, timeboxing, exam-oriented constraint planning | The Skill chooses 7-day, 3-day, or 24-hour mode based on the exam date and remaining time. |
+| Material archiving | Information chunking, source provenance, evidence-based learning | Materials are grouped by course; low-confidence files are separated into `to-confirm/` instead of silently merged. |
+| Course skeleton first | Advance organizers, schema theory, concept mapping, constructive alignment | The Skill maps course/chapter/topic/subtopic before writing compressed summaries. |
+| Evidence grading | Evidence hierarchy, triangulation, source criticism | User materials outrank school-specific repositories, which outrank generic explanation aids. |
+| School-targeted GitHub search | Situated learning, near transfer, ecological validity | School and course matches can strengthen question-style evidence, but only with explicit match criteria. |
+| Topic-card notes | Cornell notes, active recall, chunking, worked-example effect | Each topic card answers what to memorize, how to solve, common mistakes, and how to self-test. |
+| Cornell-style question blocks | Cornell note-taking method, testing effect, generation effect | Notes use question prompts plus collapsible reference answers so the user recalls before reading. |
+| Cram-mode planning | Backward planning, Pareto principle, spaced repetition, Ebbinghaus forgetting curve | Shorter time windows shift the workflow toward high-value topics, retrieval, mistake review, and repeated recall. |
+| Visual aids | Dual coding theory, multimedia learning, spatial reasoning externalization | Diagrams are used for regions, directions, normals, transforms, and graph structures only when they reduce confusion. |
+| Explanation aids | Feynman technique, elaborative encoding, analogy-based learning | Open notes and worked examples may improve intuition or memory hooks, but they do not redefine exam scope. |
+| Self-tests | Retrieval practice, testing effect, formative assessment | The Skill asks short rounds of questions and reveals scoring points only after the user attempts recall. |
+| User self-evaluation | Metacognitive calibration, self-regulated learning | Users label answers as `know`, `partial`, or `dont know`; the Skill uses labels to choose the next move. |
+| Weakness diagnosis | Diagnostic assessment, mastery learning, error analysis | Follow-up questions locate whether the problem is definition, formula, recognition, or execution. |
+| Self-test fuse | Cognitive load management, scaffolding, frustration control | After repeated `dont know` labels, the Skill stops testing and routes the user back to rebuilding notes. |
+| Conservative mastery language | Metacognitive bias control, validity limits | The Skill uses cautious labels such as `temporary recall ok` and avoids claiming mastery from its own grading. |
+| Incremental updates | Spaced repetition, forgetting-curve-aware review, learning logs | Existing `index.md` files and prior notes are reused; new materials update only affected sections. |
 
-## 方法速记
+## Installation
 
-- **康奈尔笔记法**: 把知识点改写成左侧问题和右侧答案。skill 用 Markdown 的 `Q1 + details` 结构实现，方便先遮住答案回忆。
-- **倒排法**: 从考试日期反推复习路径。skill 先问考试时间，再选择 7 天、3 天或 24 小时模式。
-- **遗忘曲线**: 记忆会随时间快速衰退。skill 通过短轮自测、后续复用、增量更新和复习状态标签，把“看过”变成可重复提取。
-- **主动回忆**: 复习时先从脑子里取答案，而不是先看资料。skill 的自测、topic card 和问题块都围绕 retrieval practice 设计。
-- **帕累托原则**: 时间紧时优先处理高收益主题。skill 只在有老师重点、题型分布或往年卷证据时推荐真正放弃，否则只降为低优先级。
-- **双编码理论**: 文字和视觉通道同时编码能帮助理解。skill 只给空间、图形、方向和区域类难点加视觉块，避免装饰性图片。
-- **形成性评价**: 测试是为了发现下一步怎么学，不是为了宣布最终成绩。skill 的自评标签和错误标签用于决定下一轮补救。
+Copy `nuwa-mends-the-sky/` into your Codex skills directory.
 
-## 仓库结构
+Windows example:
 
-```text
-.
-├── SKILL.md
-├── README.md
-├── agents/
-│   └── openai.yaml
-└── references/
-    └── output-conventions.md
+```powershell
+Copy-Item -Recurse ".\nuwa-mends-the-sky" "$env:USERPROFILE\.codex\skills\nuwa-mends-the-sky"
 ```
 
-## 使用方式
+Then restart Codex, or start a new Codex session.
 
-把本仓库作为 Codex skill 安装后，在需要从真实课程材料生成期末复习工作流时触发：
+## Repository Structure
 
 ```text
-Use $nuwa-mends-the-sky to turn my course materials into a one-course final-exam cram workflow.
+--skill/
+├─ README.md
+├─ README.zh-CN.md
+└─ nuwa-mends-the-sky/
+   ├─ SKILL.md
+   ├─ agents/
+   │  └─ openai.yaml
+   └─ references/
+      └─ output-conventions.md
 ```
 
-维护时优先更新 `SKILL.md` 的执行规则；如果增加或删除核心功能，也同步更新本 README 的“功能与理论支持”表，确保设计依据和实际行为一致。
+## Usage Example
+
+```text
+Use $nuwa-mends-the-sky.
+I put review materials for Advanced Mathematics, Ideology and Morality, and Discrete Mathematics in this folder.
+My school is XX University.
+The Advanced Mathematics exam is on July 1.
+Please process only Advanced Mathematics A first.
+```
+
+The Skill should first:
+
+- confirm file mode or chat mode
+- confirm the exam time
+- process only one course
+- archive materials by course
+- build an evidence-based course skeleton
+- search school-specific open question sources when useful
+- generate directly reviewable topic cards, self-tests, and a cram summary
+
+## Current Status
+
+V0.1
+
+Implemented:
+
+- semi-automatic final-exam cram workflow
+- one-course-at-a-time processing
+- file mode and chat mode
+- material archiving rules
+- evidence grading
+- school-targeted GitHub question-bank search rules
+- GitHub and open lecture notes as explanation aids
+- topic-card note rules
+- visual aid rules
+- self-test and user self-evaluation rules
+- incremental material update rules
+
+## License
+
+MIT License is recommended. Adjust before formal open-source release if the repository needs a different license.
