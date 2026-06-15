@@ -229,4 +229,4 @@ Implemented:
 
 ## License
 
-MIT License is recommended. Adjust before formal open-source release if the repository needs a different license.
+This repository is licensed under the MIT License.
